@@ -1,0 +1,212 @@
+[
+    {
+        "id": "c376682708af27dd",
+        "type": "tab",
+        "label": "IoT Project",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "9ed3d16d08113d99",
+        "type": "http request",
+        "z": "c376682708af27dd",
+        "name": "GET Temperature and Fire Alarm Status",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://ca66-2a03-b0c0-1-d0-00-f5d-1001.ngrok.io/get_temp",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 820,
+        "y": 240,
+        "wires": [
+            [
+                "e9e7c3779d264abd"
+            ]
+        ]
+    },
+    {
+        "id": "e9e7c3779d264abd",
+        "type": "json",
+        "z": "c376682708af27dd",
+        "name": "Process Information",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 560,
+        "y": 360,
+        "wires": [
+            [
+                "c1d318eb4e4d308d"
+            ]
+        ]
+    },
+    {
+        "id": "c1d318eb4e4d308d",
+        "type": "function",
+        "z": "c376682708af27dd",
+        "name": "Display Information",
+        "func": "var msg0 = { payload: msg.payload.temperature };\nvar msg1 = { payload: msg.payload.humidity };\nvar msg2 = { payload: msg.payload.fireAlarm };\n\nreturn [msg0, msg1, msg2];",
+        "outputs": 4,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 360,
+        "wires": [
+            [
+                "21020e5b3f280951"
+            ],
+            [
+                "d5898929cf99e06b"
+            ],
+            [
+                "2be6539f3abefb44"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "21020e5b3f280951",
+        "type": "ui_gauge",
+        "z": "c376682708af27dd",
+        "name": "",
+        "group": "2b7ac01b.fc984",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "ºC",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 1030,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "d5898929cf99e06b",
+        "type": "ui_gauge",
+        "z": "c376682708af27dd",
+        "name": "",
+        "group": "2b7ac01b.fc984",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidity",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#0d73d3",
+            "#1a3dea",
+            "#0400e6"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 1040,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "41e3ac20a95d0799",
+        "type": "ui_text",
+        "z": "c376682708af27dd",
+        "group": "2b7ac01b.fc984",
+        "order": 6,
+        "width": "6",
+        "height": "2",
+        "name": "",
+        "label": "<font size = 6> FIRE ALARM: </font>",
+        "format": "<font color= {{msg.payload == 1 ? \"red\" : \"green\"}} size = 6> {{msg.payload == 1 ? \"ON\" : \"OFF\"}} </font>",
+        "layout": "row-center",
+        "className": "",
+        "x": 1290,
+        "y": 500,
+        "wires": [],
+        "icon": "font-awesome/fa-warning"
+    },
+    {
+        "id": "9ffed78087a71822",
+        "type": "inject",
+        "z": "c376682708af27dd",
+        "name": "Loop every second",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 450,
+        "y": 240,
+        "wires": [
+            [
+                "9ed3d16d08113d99"
+            ]
+        ]
+    },
+    {
+        "id": "2be6539f3abefb44",
+        "type": "function",
+        "z": "c376682708af27dd",
+        "name": "Fire Alarm",
+        "func": "if (msg.payload.fireAlarm == 1) {\n    console.log(true);\n    msg.color = \"red\";\n    msg.message = \"ON\";\n} else {\n    msg.color = \"green\";\n    msg.message = \"OFF\";\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 500,
+        "wires": [
+            [
+                "41e3ac20a95d0799"
+            ]
+        ]
+    },
+    {
+        "id": "2b7ac01b.fc984",
+        "type": "ui_group",
+        "name": "SENSORS",
+        "tab": "99ab8dc5.f435c",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "99ab8dc5.f435c",
+        "type": "ui_tab",
+        "name": "HTTP",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
